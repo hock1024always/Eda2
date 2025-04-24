@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOT 代码解析</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 150px;
+        }
+        button {
+            margin-top: 10px;
+        }
+        .result {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+<h1>DOT 代码解析</h1>
+<textarea id="dotCode" placeholder="请输入 DOT 代码"></textarea>
+<button id="parseButton">解析</button>
+<div class="result" id="result"></div>
+
+<script>
+    document.getElementById('parseButton').addEventListener('click', function () {
+        const dotCode = document.getElementById('dotCode').value;
+        const resultDiv = document.getElementById('result');
+
+        fetch('/dot/netlist', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ dot_code: dotCode })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === "成功") {
+                    resultDiv.textContent = data.data;
+                } else {
+                    resultDiv.textContent = "解析失败：" + data.message;
+                }
+            })
+            .catch(error => {
+                resultDiv.textContent = "请求失败：" + error.message;
+            });
+    });
+</script>
+</body>
+</html>
+
